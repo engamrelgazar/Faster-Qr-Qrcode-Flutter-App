@@ -1,3 +1,6 @@
+![Faster Qr](https://github.com/user-attachments/assets/34faa1d6-c5c2-4fb7-9c0f-67ca1739e43a)
+
+
 # fasterqr
 
 Faster QR is a mobile application designed for scanning and generating QR codes with ease and speed. The application supports various functionalities such as scanning QR codes, generating custom QR codes, and saving QR codes to the device. It is built using Flutter and leverages multiple packages for its core features.
