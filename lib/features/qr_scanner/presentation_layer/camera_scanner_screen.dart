@@ -7,13 +7,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:fasterqr/features/qr_scanner/bloc/scanner_bloc.dart';
+import 'package:scan/scan.dart';
 
 /// A stateless widget that displays the camera scanner screen.
 class CameraScannerScreen extends StatelessWidget {
   // Controller for the mobile scanner.
-  final MobileScannerController controller = MobileScannerController();
+  final ScanController controller = ScanController();
 
   // Constructor for the CameraScannerScreen widget.
   CameraScannerScreen({super.key});
@@ -24,46 +24,21 @@ class CameraScannerScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Camera Scanner'),
       ),
-      body: MobileScanner(
-        
-        controller: controller,
-        fit: BoxFit.cover,
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: ScanView(
+          controller: controller,
+          scanAreaScale: .7,
+          scanLineColor: Colors.green.shade400,
 
-        /// Callback function when a QR code is detected.
-        onDetect: (barcodeCapture) {
-          final barcode = barcodeCapture.barcodes.first;
-          if (barcode.rawValue != null) {
+          /// Callback function when a QR code is detected.
+          onCapture: (barcodeCapture) {
             // Triggering the ScanCompleted event with the detected barcode value.
             BlocProvider.of<ScannerBloc>(context)
-                .add(ScanCompleted(barcode.rawValue!, context));
-          }
-        },
-
-        /// Builder function to display an error message if scanning fails.
-        errorBuilder: (context, error, child) {
-          return Center(child: Text('Error: ${error.errorDetails!.message}'));
-        },
-
-        /// Builder function to display an overlay on the scanner.
-        overlayBuilder: (context, constraints) {
-          return Center(
-            child: Container(
-              width: constraints.maxWidth * 0.8,
-              height: constraints.maxHeight * 0.4,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.green, width: 2),
-              ),
-            ),
-          );
-        },
-
-        /// Builder function to display a placeholder while the scanner is initializing.
-        placeholderBuilder: (context, child) {
-          return const Center(child: CircularProgressIndicator());
-        },
-
-        /// Threshold for updating the scan window.
-        scanWindowUpdateThreshold: 10.0,
+                .add(ScanCompleted(barcodeCapture, context));
+          },
+        ),
       ),
     );
   }

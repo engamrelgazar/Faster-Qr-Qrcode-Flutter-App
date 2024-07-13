@@ -1,27 +1,14 @@
-import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:images_picker/images_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:scan/scan.dart';
 
 /// [ScannerDataSource] handles the low-level QR code scanning operations.
 class ScannerDataSource {
-  final MobileScannerController controller = MobileScannerController();
 
-  /// Starts scanning for QR codes using the camera.
-  Future<void> startScanning(Function(String) onBarcodeDetected) async {
-    if (!controller.value.isRunning) {
-      await controller.start();
-    }
-    controller.barcodes.listen((barcodeCapture) {
-      final barcode = barcodeCapture.barcodes.first;
-      if (barcode.rawValue != null) {
-        onBarcodeDetected(barcode.rawValue!);
-      }
-    });
-  }
 
   /// Analyzes a QR code from an image.
-  Future<BarcodeCapture?> analyzeImage(String path) async {
-    return await controller.analyzeImage(path);
+  Future<String?> analyzeImage(String path) async {
+    return await Scan.parse(path);
   }
 
   /// Picks an image from the gallery.

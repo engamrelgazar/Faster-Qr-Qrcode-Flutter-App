@@ -25,3 +25,5 @@ class ScanFailure extends ScannerState {
   final String message;
   ScanFailure(this.message);
 }
+
+class OpenCamera extends ScannerState {}

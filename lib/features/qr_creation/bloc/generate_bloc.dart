@@ -42,8 +42,7 @@ class GenerateBloc extends Bloc<GenerateEvent, GenerateState> {
     try {
       RenderRepaintBoundary boundary = event.globalKey.currentContext!
           .findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage(
-          pixelRatio: 3.0); // Adjust pixel ratio for higher resolution
+      var image = await boundary.toImage(pixelRatio: 3);
       ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
       Uint8List pngBytes = byteData!.buffer.asUint8List();
       final tempDir = await getTemporaryDirectory();

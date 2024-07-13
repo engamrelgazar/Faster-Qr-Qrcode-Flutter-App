@@ -13,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fasterqr/core/widgets/custom_button.dart';
 import 'package:fasterqr/features/qr_scanner/bloc/scanner_bloc.dart';
+
 /// ScannerScreen handles the UI for QR code scanning, including initial scanning,
 /// displaying scan results, and handling scan failures.
 class ScannerScreen extends StatelessWidget {
@@ -20,24 +21,21 @@ class ScannerScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ScannerBloc(),
-      child: Center(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: BlocBuilder<ScannerBloc, ScannerState>(
-              builder: (context, state) {
-                if (state is ScannerInitial) {
-                  return _buildInitialContent(context);
-                } else if (state is ScanSuccess) {
-                  return _buildScanSuccessContent(context, state.scannedValue);
-                } else if (state is ScanFailure) {
-                  return _buildFailureContent(context, state.message);
-                }
-                return Container(); // Default empty container
-              },
-            ),
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: BlocBuilder<ScannerBloc, ScannerState>(
+            builder: (context, state) {
+              if (state is ScannerInitial) {
+                return _buildInitialContent(context);
+              } else if (state is ScanSuccess) {
+                return _buildScanSuccessContent(context, state.scannedValue);
+              } else if (state is ScanFailure) {
+                return _buildFailureContent(context, state.message);
+              }
+              return Container(); // Default empty container
+            },
           ),
         ),
       ),

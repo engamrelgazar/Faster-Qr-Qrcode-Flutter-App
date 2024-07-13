@@ -58,11 +58,13 @@ class _GeneratorScreenState extends State<GeneratorScreen> {
           return RepaintBoundary(
             key: globalKey,
             child: QrImageView(
+              errorCorrectionLevel: QrErrorCorrectLevel.H,
+              version: QrVersions.auto,
               backgroundColor: Colors.white,
               data: state.qrData,
               eyeStyle: state.eyeStyle,
               dataModuleStyle: state.dataModuleStyle,
-              size: 200,
+              size: 250,
             ),
           );
         } else if (state is ImagePickedState) {

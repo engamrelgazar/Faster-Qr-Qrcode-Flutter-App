@@ -11,12 +11,6 @@ part of 'scanner_bloc.dart';
 @immutable
 sealed class ScannerEvent {}
 
-/// Event to start scanning using the camera.
-class StartScan extends ScannerEvent {
-  final BuildContext context;
-  StartScan(this.context);
-  List<Object> get props => [context];
-}
 
 /// Event to scan a QR code from an image.
 class ScanFromImage extends ScannerEvent {}

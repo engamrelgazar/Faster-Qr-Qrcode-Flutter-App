@@ -1,6 +1,5 @@
 import 'package:fasterqr/features/qr_scanner/data_layer/scanner_data_source.dart';
 import 'package:images_picker/images_picker.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 /// [ScannerRepository] provides the interface for scanning QR codes.
 class ScannerRepository {
@@ -8,13 +7,10 @@ class ScannerRepository {
 
   ScannerRepository(this.dataSource);
 
-  /// Starts scanning for QR codes using the camera.
-  Future<void> startScanning(Function(String) onBarcodeDetected) async {
-    await dataSource.startScanning(onBarcodeDetected);
-  }
+
 
   /// Analyzes a QR code from an image.
-  Future<BarcodeCapture?> analyzeImage(String path) async {
+  Future<String?> analyzeImage(String path) async {
     return await dataSource.analyzeImage(path);
   }
 

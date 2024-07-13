@@ -8,7 +8,6 @@ import 'package:fasterqr/services/operation_service.dart';
 import 'package:images_picker/images_picker.dart';
 import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
 
 part 'scanner_event.dart';
 part 'scanner_state.dart';
@@ -23,7 +22,6 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
       : operationService = OperationService(),
         repository = ScannerRepository(ScannerDataSource()),
         super(ScannerInitial()) {
-    on<StartScan>(_onStartScan);
     on<ScanFromImage>(_onScanFromImage);
     on<ScanAgain>(_onScanAgain);
     on<ScanCompleted>(_onScanCompleted);
@@ -36,22 +34,9 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
     final hasPermission = await repository.checkCameraPermission();
     if (hasPermission) {
       if (!event.context.mounted) return;
-      add(StartScan(event.context));
       Navigator.pushNamed(event.context, AppRoutes.cameraScanner);
     } else {
       CustomToast.errorToast('Camera permission is required to scan QR codes.');
-    }
-  }
-
-  /// Starts the QR code scanning process using the mobile camera.
-  Future<void> _onStartScan(StartScan event, Emitter<ScannerState> emit) async {
-    try {
-      await repository.startScanning((barcode) {
-        add(ScanCompleted(barcode, event.context));
-      });
-    } catch (e) {
-      emit(ScanFailure(e.toString()));
-      CustomToast.errorToast(e.toString());
     }
   }
 
@@ -61,11 +46,11 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
     try {
       List<Media>? res = await repository.pickImage();
       if (res != null && res.isNotEmpty) {
-        BarcodeCapture? result = await repository.analyzeImage(res[0].path);
+        String? result = await repository.analyzeImage(res[0].path);
         if (result != null) {
           await _playSuccessSound();
-          operationService.saveOperation(result.barcodes.first.rawValue!);
-          emit(ScanSuccess(result.barcodes.first.rawValue!));
+          operationService.saveOperation(result);
+          emit(ScanSuccess(result));
         } else {
           emit(ScanFailure('No QR code found in the image.'));
           CustomToast.errorToast('No QR code found in the image.');
@@ -82,12 +67,10 @@ class ScannerBloc extends Bloc<ScannerEvent, ScannerState> {
 
   /// Handles the successful completion of a QR code scan.
   void _onScanCompleted(ScanCompleted event, Emitter<ScannerState> emit) async {
+    emit(ScanSuccess(event.result));
     await _playSuccessSound();
     operationService.saveOperation(event.result);
-    emit(ScanSuccess(event.result));
-    await Future.delayed(
-        const Duration(milliseconds: 300)); // تأخير بسيط لتجنب التعارض
-    if (!event.context.mounted) return;
+    if (!event.context.mounted) return null;
     if (Navigator.canPop(event.context)) {
       Navigator.pop(event.context);
     }
